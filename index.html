@@ -283,7 +283,7 @@ footer .reset-link{margin-top:6px;}
     let count = parseInt(howMany.value, 10);
 
     if(isNaN(from)) from = 1;
-    if(isNaN(to)) to = 49;
+    if(isNaN(to)) to = 15;
     if(to < from){ [from, to] = [to, from]; }
     const totalAvailable = to - from + 1;
     if(isNaN(count) || count < 1) count = 1;
@@ -330,7 +330,7 @@ footer .reset-link{margin-top:6px;}
     clearInterval(rollTimer);
     rollTimer = setInterval(()=>{
       const from = parseInt(rangeFrom.value,10) || 1;
-      const to = parseInt(rangeTo.value,10) || 49;
+      const to = parseInt(rangeTo.value,10) || 15;
       ballSlot.textContent = Math.floor(Math.random()*(to-from+1))+from;
       ticks++;
       if(ticks > 8){
@@ -382,7 +382,7 @@ footer .reset-link{margin-top:6px;}
   resetAllBtn.addEventListener('click', ()=>{
     stage.hidden = true;
     rangeFrom.value = 1;
-    rangeTo.value = 49;
+    rangeTo.value = 15;
     howMany.value = 6;
     historyList.innerHTML = '';
   });
