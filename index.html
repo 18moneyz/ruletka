@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+j<!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ruletka Europejska</title>
+<title>Ciągnij losy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -60,63 +60,73 @@
   }
   .balance .amount span{font-size:16px;color:var(--muted);font-family:'Barlow Semi Condensed',sans-serif;}
 
-  /* ===== WHEEL AREA ===== */
+  /* ===== DRAW BOX (LOSOWANIE) AREA ===== */
   .wheel-zone{
     display:flex;flex-direction:column;align-items:center;
     gap:16px;margin-bottom:26px;
   }
   .wheel-stage{
-    position:relative;width:min(300px,80vw);height:min(300px,80vw);
+    position:relative;width:min(220px,70vw);height:210px;
+    display:flex;flex-direction:column;align-items:center;
+    padding-top:70px;
   }
-  .pointer{
-    position:absolute;top:-6px;left:50%;transform:translateX(-50%);
-    width:0;height:0;
-    border-left:12px solid transparent;
-    border-right:12px solid transparent;
-    border-top:20px solid var(--gold-bright);
-    filter:drop-shadow(0 2px 3px rgba(0,0,0,0.6));
-    z-index:5;
+  .draw-box{
+    position:absolute;bottom:0;left:0;right:0;
+    height:130px;border-radius:16px;
+    background:
+      linear-gradient(160deg, #1c1409 0%, #100b05 60%, #0a0705 100%);
+    border:3px solid var(--gold);
+    box-shadow:0 14px 34px rgba(0,0,0,0.55), inset 0 0 22px rgba(0,0,0,0.6);
+    z-index:1;
   }
-  .rim{
-    position:absolute;inset:0;border-radius:50%;
-    background:conic-gradient(from 0deg,var(--gold) 0deg,#8a6a17 90deg,var(--gold) 180deg,#8a6a17 270deg,var(--gold) 360deg);
-    padding:10px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.55), inset 0 0 12px rgba(0,0,0,0.4);
+  .draw-box::before{
+    content:'';
+    position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:96px;height:12px;border-radius:7px;
+    background:#050403;
+    box-shadow:inset 0 3px 6px rgba(0,0,0,0.9), 0 1px 0 rgba(201,162,39,0.4);
   }
-  .rim-inner{
-    width:100%;height:100%;border-radius:50%;
-    background:#0d1210;
-    display:flex;align-items:center;justify-content:center;
-    overflow:hidden;
+  .draw-box::after{
+    content:'LOSOWANIE';
+    position:absolute;bottom:14px;left:0;right:0;text-align:center;
+    font-size:10px;letter-spacing:0.35em;color:var(--gold);
+    opacity:0.55;
   }
-  #wheel-svg{
-    width:100%;height:100%;
-    transition: transform 4.2s cubic-bezier(.17,.67,.16,1);
-  }
-  .hub{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:17%;height:17%;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold) 55%, #7a5c14 100%);
-    box-shadow:0 3px 10px rgba(0,0,0,0.6);
-    z-index:4;
-  }
-  .ball-marker{
-    position:absolute;top:2%;left:50%;
-    width:12px;height:12px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #fff, #cfcfcf 70%, #8a8a8a);
-    box-shadow:0 2px 4px rgba(0,0,0,0.7);
-    transform:translate(-50%,0) scale(0);
+  .ticket{
+    position:absolute;top:36px;left:50%;
+    width:74px;height:100px;margin-left:-37px;
+    perspective:700px;
+    transform:translateY(78px) scale(0.35);
     opacity:0;
-    z-index:6;
-    transition:none;
+    transform-origin:bottom center;
+    transition:transform .9s cubic-bezier(.22,1.3,.4,1), opacity .25s ease;
+    z-index:3;
   }
-  .ball-marker.show{
-    animation:ballDrop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+  .ticket.drawn{
+    transform:translateY(0) scale(1);
+    opacity:1;
   }
-  @keyframes ballDrop{
-    0%{transform:translate(-50%,0) scale(0);opacity:0;}
-    60%{transform:translate(-50%,0) scale(1.3);opacity:1;}
-    100%{transform:translate(-50%,0) scale(1);opacity:1;}
+  .ticket-inner{
+    width:100%;height:100%;position:relative;
+    transform-style:preserve-3d;
+    transition:transform .55s ease;
+  }
+  .ticket.flipped .ticket-inner{ transform:rotateY(180deg); }
+  .ticket-front, .ticket-back{
+    position:absolute;inset:0;border-radius:8px;
+    backface-visibility:hidden;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--gold);
+    box-shadow:0 6px 14px rgba(0,0,0,0.5);
+    font-family:'Cormorant Garamond',serif;font-weight:700;
+  }
+  .ticket-front{
+    background:repeating-linear-gradient(45deg, #145c41, #145c41 6px, #0b3d2e 6px, #0b3d2e 12px);
+    color:var(--gold-bright);font-size:26px;
+  }
+  .ticket-back{
+    transform:rotateY(180deg);
+    font-size:32px;color:#fff;
   }
 
   .result-banner{
@@ -282,16 +292,15 @@
 
   <div class="wheel-zone">
     <div class="wheel-stage">
-      <div class="pointer"></div>
-      <div class="rim">
-        <div class="rim-inner">
-          <svg id="wheel-svg" viewBox="0 0 400 400"></svg>
+      <div class="ticket" id="ticket">
+        <div class="ticket-inner">
+          <div class="ticket-front">?</div>
+          <div class="ticket-back" id="ticketBack"></div>
         </div>
       </div>
-      <div class="hub"></div>
-      <div class="ball-marker" id="ballMarker"></div>
+      <div class="draw-box"></div>
     </div>
-    <div class="result-banner" id="resultBanner">Postaw żetony i zakręć kołem</div>
+    <div class="result-banner" id="resultBanner">Postaw żetony i wyciągnij los</div>
     <div class="history" id="history"></div>
   </div>
 
@@ -316,7 +325,7 @@
     <div class="action-buttons">
       <button class="btn btn-top" id="topUpBtn">Dopłać 1000</button>
       <button class="btn btn-clear" id="clearBtn">Wyczyść zakłady</button>
-      <button class="btn btn-spin" id="spinBtn" disabled>Zakręć kołem</button>
+      <button class="btn btn-spin" id="spinBtn" disabled>Wyciągnij los</button>
     </div>
   </div>
 
@@ -326,21 +335,19 @@
 <script>
 (function(){
   const RED = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-  const wheelOrder = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
-  const SEG = 360/37;
 
   let balance = 1000;
   let selectedChip = 10;
   let bets = {}; // key -> amount
   let spinning = false;
-  let currentRotation = 0;
 
   const balanceEl = document.getElementById('balanceAmount');
   const betTotalEl = document.getElementById('betTotal');
   const spinBtn = document.getElementById('spinBtn');
   const resultBanner = document.getElementById('resultBanner');
   const historyEl = document.getElementById('history');
-  const ballMarker = document.getElementById('ballMarker');
+  const ticketEl = document.getElementById('ticket');
+  const ticketBackEl = document.getElementById('ticketBack');
 
   function isRed(n){ return RED.includes(n); }
   function colorOf(n){ return n===0 ? 'green' : (isRed(n) ? 'red' : 'black'); }
@@ -356,46 +363,6 @@
     betTotalEl.textContent = fmt(betTotalAmount());
     spinBtn.disabled = spinning || betTotalAmount()===0;
   }
-
-  // ---------- Build wheel SVG ----------
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const wheelSvg = document.getElementById('wheel-svg');
-  const cx=200, cy=200, rOuter=190, rInner=0;
-
-  function polar(cx,cy,r,angleDeg){
-    const a = (angleDeg-90) * Math.PI/180;
-    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
-  }
-
-  wheelOrder.forEach((num, i)=>{
-    const startAngle = i*SEG;
-    const endAngle = (i+1)*SEG;
-    const [x1,y1] = polar(cx,cy,rOuter,startAngle);
-    const [x2,y2] = polar(cx,cy,rOuter,endAngle);
-    const path = document.createElementNS(svgNS,'path');
-    const largeArc = SEG>180?1:0;
-    const d = `M ${cx} ${cy} L ${x1} ${y1} A ${rOuter} ${rOuter} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-    path.setAttribute('d', d);
-    let fill = num===0 ? '#146c43' : (isRed(num) ? '#9c1f2e' : '#15181b');
-    path.setAttribute('fill', fill);
-    path.setAttribute('stroke', '#c9a227');
-    path.setAttribute('stroke-width', '0.6');
-    wheelSvg.appendChild(path);
-
-    const midAngle = startAngle + SEG/2;
-    const [tx,ty] = polar(cx,cy,rOuter*0.82, midAngle);
-    const text = document.createElementNS(svgNS,'text');
-    text.setAttribute('x', tx);
-    text.setAttribute('y', ty);
-    text.setAttribute('fill', '#ede6d6');
-    text.setAttribute('font-size', '13');
-    text.setAttribute('font-family', "'Barlow Semi Condensed', sans-serif");
-    text.setAttribute('font-weight', '600');
-    text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('transform', `rotate(${midAngle}, ${tx}, ${ty})`);
-    text.textContent = num;
-    wheelSvg.appendChild(text);
-  });
 
   // ---------- Build betting table ----------
   const tableMain = document.getElementById('tableMain');
@@ -544,26 +511,36 @@
     if(spinning || betTotalAmount()===0) return;
     spinning = true;
     spinBtn.disabled = true;
-    ballMarker.classList.remove('show');
-    resultBanner.textContent = 'Kulka w ruchu...';
+    resultBanner.textContent = 'Losowanie...';
+
+    // reset losu do stanu ukrytego w skrzynce
+    ticketEl.classList.remove('drawn','flipped');
+    ticketBackEl.style.background = '';
+    ticketBackEl.textContent = '';
+    // wymuszamy reflow, żeby przeglądarka na pewno cofnęła animację przed kolejnym uruchomieniem
+    void ticketEl.offsetWidth;
 
     const winningNumber = Math.floor(Math.random()*37);
-    const idx = wheelOrder.indexOf(winningNumber);
-    const targetOffset = (360 - (idx*SEG + SEG/2) + 360) % 360;
-    const extraSpins = 6 + Math.floor(Math.random()*3); // 6-8 full turns
-    currentRotation += extraSpins*360 + ((targetOffset - (currentRotation % 360)) + 360) % 360;
 
-    wheelSvg.style.transform = `rotate(${currentRotation}deg)`;
+    // krok 1: los wysuwa się ze skrzynki
+    requestAnimationFrame(()=>{
+      ticketEl.classList.add('drawn');
+    });
 
-    const onDone = ()=>{
-      wheelSvg.removeEventListener('transitionend', onDone);
-      settleResult(winningNumber);
+    const onDrawn = (e)=>{
+      if(e.propertyName !== 'transform') return;
+      ticketEl.removeEventListener('transitionend', onDrawn);
+      // krok 2: los się odwraca i pokazuje wylosowaną liczbę
+      const fill = winningNumber===0 ? '#146c43' : (isRed(winningNumber) ? '#9c1f2e' : '#15181b');
+      ticketBackEl.style.background = fill;
+      ticketBackEl.textContent = winningNumber;
+      ticketEl.classList.add('flipped');
+      setTimeout(()=> settleResult(winningNumber), 550);
     };
-    wheelSvg.addEventListener('transitionend', onDone);
+    ticketEl.addEventListener('transitionend', onDrawn);
   }
 
   function settleResult(n){
-    ballMarker.classList.add('show');
     addHistory(n);
 
     let winnings = 0;
